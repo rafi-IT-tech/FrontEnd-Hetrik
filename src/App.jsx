@@ -9,6 +9,7 @@ import Service from "./pages/service page/services";
 import Article from "./pages/article page/Article";
 import Login from "./pages/login page/Login";
 import Signup from "./pages/register page/Register";
+import "./App.css";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 
 const PrivateRoute = ({ element }) => {
