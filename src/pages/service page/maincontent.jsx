@@ -9,24 +9,36 @@ const Servicemain = () => {
 
     // const history = createBrowserHistory();
 
-    useEffect(() => {
-        const URL_API_POWER_BUILDING = 'https://example.com/api/power-options';
-
-        axios
-            .get(URL_API_POWER_BUILDING)
-            .then(response => {
-                setPowerOptions(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching power options:', error);
-            });
-    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        console.log('Data yang di-submit:', {buildingName, selectedPower});
 
+        const data = {
+            building_name: buildingName,
+            powerCapacity: selectedPower,
+        };
+
+        console.log("Data Yang dikirim atau dijadikan Request Building Nama, " + data.building_name);
+        console.log("Data Yang dikirim atau dijadikan Request Building Power, " + data.powerCapacity);
+
+        // console.log('Data yang di-submit:', {buildingName, selectedPower});
+        const URL_API_POWER_BUILDING = 'https://hetrik-api.onrender.com/api/dayaBangunan/dayabangunan';
+
+        const storedToken = localStorage.getItem('token');
+        axios
+            .post(URL_API_POWER_BUILDING, data,{
+                headers:{
+                    'Authorization': `Bearer ${storedToken}`
+                }
+            })
+            .then(response => {
+                // setPowerOptions(response.data);
+                console.log("Response Success",response);
+            })
+            .catch(error => {
+                console.error('Error fetching power options:', error);
+            });
         // Redirect Off
         // history.push('/dashboard');
     };
@@ -60,12 +72,19 @@ const Servicemain = () => {
                         onChange={(e) => setSelectedPower(e.target.value)}
                         className="border border-gray-300 p-2 w-full"
                         required="required">
-                        <option value="" disabled="disabled">Building power</option>
-                        {
+                        <option value="" >Building power</option>
+                        <option value="900" >900 VA </option>
+                        <option value="1200">1200 VA </option>
+                        <option value="2200">2200 VA</option>
+                        <option value="3500">3500 VA</option>
+                        <option value="5500">5500 VA</option>
+                        <option value="6600">6600 VA</option>
+
+                        {/* {
                             powerOptions.map(
                                 (option) => (<option key={option.id} value={option.value}>{option.label}</option>)
                             )
-                        }
+                        } */}
                     </select>
                 </div>
                 <button
