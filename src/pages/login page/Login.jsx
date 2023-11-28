@@ -32,21 +32,22 @@ const Login = () => {
                 console.log('Login successful:', response.data);
                 const authToken = response.data.token;
                 setToken(authToken);
-
+                localStorage.setItem('token', authToken);
                 handleAuthenticatedRequest();
             })
             .catch(error => {
-                console.error('Error during login:', error.response.data);
+                console.error('Error during login:', error);
             });
     };
 
     const handleAuthenticatedRequest = () => {
 
 
-        console.log("Token " + token);
+        const storedToken = localStorage.getItem('token');
+        console.log("Token " + storedToken);
         axios.get(authenticatedApiUrl, {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${storedToken}`,
             },
         })
             .then(response => {
