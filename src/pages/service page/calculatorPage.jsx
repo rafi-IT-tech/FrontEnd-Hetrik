@@ -2,14 +2,17 @@
 import React,{useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSearch, faToggleOn, faToggleOff, faTimes } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+
+import { useSpring, animated } from 'react-spring';
 
 const CheckoutPage = () => {
 
-
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResult, setSearchResult] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [usageData, setUsageData] = useState([]);
 
   const handleSearch = () => {
     // Implement your search logic here
@@ -39,6 +42,39 @@ const CheckoutPage = () => {
     // You can perform the actual search operation using the searchQuery
     // For now, let's just log it to the console.
   };
+
+  const handleAddToUsage = (selectedItem) => {
+    setUsageData([...usageData, { ...selectedItem, toggle: false }]);
+  };
+
+  const handleToggle = (index) => {
+    setUsageData((prevUsageData) => {
+      const updatedUsageData = [...prevUsageData];
+      updatedUsageData[index] = { ...updatedUsageData[index], toggle: !updatedUsageData[index].toggle };
+  
+      console.log("UpdatedUsageData TOGGLE", updatedUsageData);
+      return updatedUsageData;
+    });
+  };
+
+  const handleDelete = (index) => {
+    setUsageData((prevUsageData) => {
+      const updatedUsageData = [...prevUsageData];
+      updatedUsageData.splice(index, 1);
+
+      
+      console.log("UpdatedUsageData DELETE " + updatedUsageData)
+      return updatedUsageData;
+    });
+  };
+
+  const toggleSpring = useSpring({
+    transform: selectedItem ? `scale(1.2)` : `scale(1)`,
+  });
+
+  const deleteSpring = useSpring({
+    opacity: selectedItem ? 1 : 0,
+  });
 
 
   return (
@@ -99,8 +135,15 @@ const CheckoutPage = () => {
                           <td>{result.device_name}</td>
                           <td>{result.device_category}</td>
                           <td>{result.product_power}</td>
-                          <td>  <button className="btn btn-success">
-              <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                          <td> 
+                          <button
+                              className="btn btn-success"
+                              onClick={() => {
+                                setSelectedItem(result);
+                                handleAddToUsage(result);
+                              }}
+                            >
+             <FontAwesomeIcon icon={faPlus} className="mr-2" />
             </button></td>
 
                           {/* Add more columns as needed */}
@@ -123,15 +166,56 @@ const CheckoutPage = () => {
             <table className="table">
               <thead>
                 <tr>
-                  <th scope="col">Column 1</th>
-                  <th scope="col">Column 2</th>
+                  <th scope="col">Device Name</th>
+                  <th scope="col">Device Category</th>
+                  <th scope="col">Device Power</th>
+                  <th colSpan={2}>Action</th>
+
                   {/* Add more columns as needed */}
                 </tr>
               </thead>
               <tbody>
-                <tr>
+              {usageData.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.device_name}</td>
+                    <td>{item.device_category}</td>
+                    <td>{item.product_power}</td>
+                    <td>
+                      <animated.span
+                        style={toggleSpring}
+                        onClick={() => handleToggle(index)}
+                      >
+                        {item.toggle ? (
+                          <FontAwesomeIcon
+                            icon={faToggleOn}
+                            className="text-success"
+                          />
+                        ) : (
+                          <FontAwesomeIcon
+                            icon={faToggleOff}
+                            className="text-secondary"
+                          />
+                        )}
+                      </animated.span>
+                    </td>
+                    <td>
+                      <animated.span
+                        style={deleteSpring}
+                        onClick={() => handleDelete(index)}
+                      >
+                        <FontAwesomeIcon
+                          icon={faTimes}
+                          className="text-danger"
+                        />
+                      </animated.span>
+                    </td>
+                    {/* Add more columns as needed */}
+                  </tr>
+                ))}
+              
+                {/* <tr>
                   <td colSpan="2" className="text-center">No data available</td>
-                </tr>
+                </tr> */}
               </tbody>
             </table>
           </div>
