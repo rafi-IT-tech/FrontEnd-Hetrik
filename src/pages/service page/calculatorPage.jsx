@@ -1,10 +1,46 @@
 // src/CheckoutPage.jsx
-import React from 'react';
+import React,{useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const CheckoutPage = () => {
+
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResult, setSearchResult] = useState(null);
+
+  const handleSearch = () => {
+    // Implement your search logic here
+    console.log('Search Query:', searchQuery);
+    const storedToken = localStorage.getItem('token');
+
+    const API_CARI = `https://hetrik-api.onrender.com/api/device/devices/search`;
+    
+    const data = {
+      name: searchQuery,
+  };
+
+  axios
+  .post(API_CARI, data,{
+      headers:{
+          'Authorization': `Bearer ${storedToken}`
+      }
+  })
+  .then(response => {
+      // setPowerOptions(response.data);
+      console.log("Response Success",response);
+      setSearchResult(response.data);
+  })
+  .catch(error => {
+      console.error('Error fetching power options:', error);
+  });
+    // You can perform the actual search operation using the searchQuery
+    // For now, let's just log it to the console.
+  };
+
+
   return (
     <div>
       <div className="container mt-5">
@@ -22,9 +58,11 @@ const CheckoutPage = () => {
                 placeholder="Search..."
                 aria-label="Search..."
                 aria-describedby="basic-addon2"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
               <div className="input-group-append">
-                <button className="btn btn-outline-secondary" type="button" id="button-addon2">
+                <button className="btn btn-outline-secondary" type="button" id="button-addon2"  onClick={handleSearch}>
                   <FontAwesomeIcon icon={faSearch} />
                 </button>
               </div>
@@ -34,6 +72,46 @@ const CheckoutPage = () => {
               Add Item
             </button>
           </div>
+
+            {/* Display search results in a card */}
+            {searchResult && (
+            <div className="container mt-3">
+              <div className="card bg-white">
+                <div className="card-header">
+                  <h2 className="card-title mb-0">Search Result</h2>
+                </div>
+                <div className="card-body">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Device Name</th>
+                        <th scope="col">Device Category</th>
+                        <th scope="col">Device Power</th>
+                        <th scope="col">Action</th>
+                        
+
+                        {/* Add more columns as needed */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {searchResult.map((result, index) => (
+                        <tr key={index}>
+                          <td>{result.device_name}</td>
+                          <td>{result.device_category}</td>
+                          <td>{result.product_power}</td>
+                          <td>  <button className="btn btn-success">
+              <FontAwesomeIcon icon={faPlus} className="mr-2" />
+            </button></td>
+
+                          {/* Add more columns as needed */}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Calculate Usage Card */}
