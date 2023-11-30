@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import image from '../../assets/bglr.png';
 import axios from 'axios';  // Import Axios
-
+import Swal from 'sweetalert2';
 import { createBrowserHistory } from 'history'; 
 
 const apiUrl = 'https://hetrik-api.onrender.com/api/auth/register'; // Use the environment variable
@@ -32,8 +32,20 @@ const Register = () => {
   axios.post(apiUrl, data)
       .then(response => {
           console.log('Register successful:', response.data);
-         history.push("/login");
-         window.location.reload();
+          Swal.fire({
+            title: 'Berhasil Daftar',
+            text: 'Selamat Anda Berhasil Daftar. Silahkan click Ok untuk diarahkan Ke Halaman Selanjutnya',
+            icon: 'success',
+            confirmButtonText: 'OK',
+          }).then((result) => {
+            // Check if the user clicked "OK"
+            console.log(result);
+            if (result.isConfirmed) {
+              // Redirect to the payment page
+              history.push('/Login');
+              window.location.reload();
+            }
+          });
       })
       .catch(error => {
           console.error('Error during login:', error.response.data);

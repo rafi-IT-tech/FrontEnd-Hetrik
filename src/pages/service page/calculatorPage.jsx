@@ -4,6 +4,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch, faToggleOn, faToggleOff, faTimes } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import { createBrowserHistory } from 'history'; 
+
 
 import { useSpring, animated } from 'react-spring';
 
@@ -16,8 +19,29 @@ const CheckoutPage = () => {
   const [saveStatus, setSaveStatus] = useState(null); // State untuk menyimpan status save
   const [saveTotal, setTotal] = useState(null); // State untuk menyimpan status save
 
+  const history = createBrowserHistory();
 
   const handleSave = () => {
+
+    const isPaymentMade = localStorage.getItem('is_payment') === 'true';
+    if (!isPaymentMade) {
+      // If payment is not made, show SweetAlert
+      Swal.fire({
+        title: 'Payment Required',
+        text: 'Anda Harus Melakukan Langganan Terlebih Dahulu',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      }).then((result) => {
+        // Check if the user clicked "OK"
+        if (result.isConfirmed) {
+          // Redirect to the payment page
+          history.push('/Paymentmain');
+          window.location.reload();
+        }
+      });
+      return;
+    }
+
     // Assuming you have a server endpoint to save the usage data
     const API_SAVE = `https://hetrik-api.onrender.com/api/hitung/usage/create`;
 
@@ -50,6 +74,22 @@ const CheckoutPage = () => {
         setSaveStatus(response.data.TotalDayaHabiskan);
         setTotal(response.data.BiayaDayaDigunakan);
         // You can perform additional actions upon successful save
+
+           // Display success message
+           Swal.fire({
+            title: 'Save Successful',
+            text: 'Your data has been saved successfully. Silahkan click Ok untuk diarahkan Ke Dashboard',
+            icon: 'success',
+            confirmButtonText: 'OK',
+          }).then((result) => {
+            // Check if the user clicked "OK"
+            console.log(result);
+            if (result.isConfirmed) {
+              // Redirect to the payment page
+              history.push('/dashboard');
+              window.location.reload();
+            }
+          });
       })
       .catch(error => {
         console.error('Error saving usage data:', error);
