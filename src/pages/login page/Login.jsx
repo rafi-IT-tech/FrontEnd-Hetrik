@@ -33,6 +33,8 @@ const Login = () => {
                 const authToken = response.data.token;
                 setToken(authToken);
                 localStorage.setItem('token', authToken);
+                localStorage.setItem('userID', response.data.userID);
+
                 handleAuthenticatedRequest();
             })
             .catch(error => {
