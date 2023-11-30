@@ -10,8 +10,9 @@ import Article from "./pages/article page/Article";
 import Login from "./pages/login page/Login";
 import Signup from "./pages/register page/Register";
 import "./App.css";
-import DashboardPage from "./pages/dashboard/DashboardPage";
-import CalculatorPage from "./pages/service page/calculatorPage";
+import DashboardPage from "./pages/dashboard/Dashboard";
+import CalculatorPage from "./pages/service page/Calculator";
+import Paymentmain from "./pages/payment/PaymentPage";
 
 const PrivateRoute = ({ element }) => {
     // Check if the user is authenticated (you can use your own logic here)
@@ -38,6 +39,7 @@ const App = () => {
         <Route path="/" element={<Homepage />}/>
         <Route path="/About" element={<PrivateRoute element={<About />} />} />
         <Route path="/Calculate" element={<PrivateRoute element={<CalculatorPage />} />} />
+        <Route path="/Paymentmain" element={<PrivateRoute element={<Paymentmain />} />} />
 
         <Route path="/Service" element={<PrivateRoute element={<Service />} />} />
         <Route path="/Article" element={<PrivateRoute element={<Article />} />} />
