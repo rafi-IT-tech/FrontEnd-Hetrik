@@ -32,8 +32,8 @@ const CheckoutPage = () => {
   const [searchResult, setSearchResult] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [usageData, setUsageData] = useState([]);
-  const [saveStatus, setSaveStatus] = useState(null); // State untuk menyimpan status save
-  const [saveTotal, setTotal] = useState(null); // State untuk menyimpan status save
+  const [saveStatus, setSaveStatus] = useState(0); // State untuk menyimpan status save
+  const [saveTotal, setTotal] = useState(0); // State untuk menyimpan status save
 
   const history = createBrowserHistory();
 
@@ -374,7 +374,7 @@ const CheckoutPage = () => {
                         <tr key={index}>
                           <td>{result.device_name}</td>
                           <td>{result.device_category}</td>
-                          <td>{result.product_power}</td>
+                          <td>{result.product_power} VA</td>
                           <td> 
                           <button
                               className="btn btn-primary"
@@ -422,7 +422,7 @@ const CheckoutPage = () => {
                   <tr key={index}>
                     <td>{item.device_name}</td>
                     <td>{item.device_category}</td>
-                    <td>{item.product_power}</td>
+                    <td>{item.product_power} VA </td>
                     <td>
                       <input
                         type="datetime-local"
