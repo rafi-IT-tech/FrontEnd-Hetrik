@@ -25,7 +25,24 @@ function DashboardPage() {
   const [customerCount, setCustomerCount] = useState(0);
   const [alertCount, setAlertCount] = useState(0);
   const [barChartData, setBarChartData] = useState([]);
+
+  const [chartLineTest, setchartLineTest] = useState([]);
+
+  const [chartLine, setchartLine] = useState([]);
+
   const storedToken = localStorage.getItem('token');
+  const userID = localStorage.getItem('userID');
+  const currentDate = new Date();
+
+  // Calculate the start of the current week
+  const startOfWeek = new Date(currentDate);
+  startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); // Start of the week is Sunday
+  startOfWeek.setHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to 0
+
+  // Calculate the end of the current week
+  const endOfWeek = new Date(currentDate);
+  endOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 6); // End of the week is Saturday
+  endOfWeek.setHours(23, 59, 59, 999); // Set hours, minutes, seconds, and milliseconds to end of the day
 
 
   const headerStyle = {
@@ -35,12 +52,12 @@ function DashboardPage() {
 
 
 
-  const transaksi = 'https://hetrik-api.onrender.com/api/hitung/usage/';
+  const transaksi = `https://hetrik-api.onrender.com/api/hitung/usage/user/${userID}`;
 
   const productUrl = 'https://hetrik-api.onrender.com/api/device/devices';
   const bangunanUrl = 'https://hetrik-api.onrender.com/api/dayaBangunan/dayabangunan';
-  const customerUrl = 'https://api.example.com/customers';
-  const alertUrl = 'https://api.example.com/alerts';
+  // const customerUrl = 'https://api.example.com/customers';
+  // const alertUrl = 'https://api.example.com/alerts';
   useEffect (() => {
 
     // Axios GET requests for each card
@@ -63,30 +80,21 @@ function DashboardPage() {
         )
       .catch(error => console.error('Error fetching category data:', error));
 
-    axios.get(customerUrl, {
-      headers: {
-          'Authorization': `Bearer ${storedToken}`,
-      },
-  })
-      .then(response => setCustomerCount(response.data.length))
-      .catch(error => console.error('Error fetching customer data:', error));
+  //   axios.get(customerUrl, {
+  //     headers: {
+  //         'Authorization': `Bearer ${storedToken}`,
+  //     },
+  // })
+  //     .then(response => setCustomerCount(response.data.length))
+  //     .catch(error => console.error('Error fetching customer data:', error));
 
-    axios.get(alertUrl, {
-      headers: {
-          'Authorization': `Bearer ${storedToken}`,
-      },
-  })
-      .then(response => setAlertCount(response.data.length))
-      .catch(error => console.error('Error fetching alert data:', error));
-
-
-    axios.get(productUrl,{
-      headers: {
-        'Authorization': `Bearer ${storedToken}`,
-    },
-    })
-    .then(response => setBarChartData(response.data))
-    .catch(error => console.error('Error fetching bar chart data:', error));
+  //   axios.get(alertUrl, {
+  //     headers: {
+  //         'Authorization': `Bearer ${storedToken}`,
+  //     },
+  // })
+  //     .then(response => setAlertCount(response.data.length))
+  //     .catch(error => console.error('Error fetching alert data:', error));
 
 
     axios.get(productUrl,{
@@ -96,6 +104,40 @@ function DashboardPage() {
     })
     .then(response => setBarChartData(response.data))
     .catch(error => console.error('Error fetching bar chart data:', error));
+
+
+    axios.get(transaksi,{
+      headers: {
+        'Authorization': `Bearer ${storedToken}`,
+    },
+    })
+    .then(response =>
+      setchartLine(response.data)
+    )
+    .catch(error => console.error('Error fetching lines chart data:', error));
+
+
+    
+    axios.get(transaksi,{
+      headers: {
+        'Authorization': `Bearer ${storedToken}`,
+    },
+    })
+    .then(response => {
+      const filteredData = response.data.filter(item => {
+        const timestamp = new Date(item.WaktuMulai); // Convert timestamp to Date object
+  
+        // Compare the date with the start and end of the week
+        return (
+          timestamp >= startOfWeek &&
+          timestamp <= endOfWeek
+        );
+      });
+  
+      // setchartLine(filteredData);
+      setchartLineTest(filteredData.length);
+    })
+    .catch(error => console.error('Error fetching line chart data:', error));
 
   }, []);
     const data = [
@@ -170,7 +212,7 @@ function DashboardPage() {
                     <h3>Total Listrik</h3>
                     <BsPeopleFill className='card_icon'/>
                 </div>
-                <h1>33</h1>
+                <h1>{chartLineTest}</h1>
             </div>
             {/* <div className='card'>
                 <div className='card-inner'>
@@ -203,6 +245,7 @@ function DashboardPage() {
                 <Legend />
                 <Bar dataKey="product_power" fill="#8884d8" />
                 {/* <Bar dataKey="device_category" fill="#82ca9d" /> */}
+                
                 </BarChart>
             </ResponsiveContainer>
 
@@ -210,7 +253,7 @@ function DashboardPage() {
                 <LineChart
                 width={500}
                 height={300}
-                data={data}
+                data={chartLine}
                 margin={{
                     top: 5,
                     right: 30,
@@ -219,12 +262,29 @@ function DashboardPage() {
                 }}
                 >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="device_name" />
+                {/* <XAxis dataKey="device_name" /> */}
                 <YAxis />
-                <Tooltip />
+                <Tooltip
+    label={({ payload }) => {
+      console.log("Payload ", payload);
+        if (payload && payload.length > 0) {
+            const dataKey = payload[0].dataKey; // Assuming the first payload item has the dataKey
+            if (dataKey === 'BiayaDayaDigunakan') {
+                return 'Biaya Daya Yang dipakai';
+            } else if (dataKey === 'TotalDayaHabiskan') {
+                return 'Total Daya Habiskan';
+            }
+        }
+        return '0';
+    }}
+    formatter={(value) => 
+    `Rp ${value ? value.toLocaleString() : '0'}`}
+/>
+
+                {/* <Tooltip /> */}
                 <Legend />
-                <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+                <Line type="monotone" dataKey="BiayaDayaDigunakan" stroke="#8884d8" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="TotalDayaHabiskan" stroke="#82ca9d" />
 
                 {/* <Line type="monotone" dataKey="product_power" stroke="#8884d8" activeDot={{ r: 8 }} />
                 <Line type="monotone" dataKey="product_power" stroke="#82ca9d" /> */}
