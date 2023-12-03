@@ -6,6 +6,22 @@ import { faPlus, faSearch, faToggleOn, faToggleOff, faTimes } from '@fortawesome
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { createBrowserHistory } from 'history'; 
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField,
+  TableFooter,
+  MenuItem
+} from '@mui/material';
 
 
 import { useSpring, animated } from 'react-spring';
@@ -170,7 +186,82 @@ const CheckoutPage = () => {
   //   });
   // };
 
+  const [dialogOpen, setDialogOpen] = useState(false);
 
+  // ... (Other logic)
+
+  // Function to handle opening the dialog
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  // Function to handle closing the dialog
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const [newDevice, setNewDevice] = useState({
+    device_name: '',
+    device_category: '',
+    product_power: '',
+  });
+
+  // ... (Other logic)
+
+  const handleInputChange = (field, value) => {
+    setNewDevice((prevDevice) => ({
+      ...prevDevice,
+      [field]: value,
+    }));
+  };
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    // You can add validation logic here before submitting
+
+    // Assuming you have a function to add the new device to your search result or usage data
+    handleAddNewDevice(newDevice);
+
+    // Close the dialog after submitting the form
+    handleDialogClose();
+  };
+
+  const handleAddNewDevice = (newDevice) => {
+    // Assuming you want to add the new device to searchResult
+
+    const apiUrl = 'https://hetrik-api.onrender.com/api/device/devices'; // Use the environment variable
+
+    console.log("New Device ", newDevice)
+    const storedToken = localStorage.getItem('token');
+
+    
+
+  axios.post(apiUrl, newDevice,{
+    headers: {
+        'Authorization': `Bearer ${storedToken}`,
+    },
+})
+      .then(response => {
+          console.log('Berhasil Menambahkan Device:', response.data);
+          Swal.fire({
+            title: 'Berhasil Daftar',
+            text: 'Selamat Anda Berhasil Menambahkan Device',
+            icon: 'success',
+            confirmButtonText: 'OK',
+          }).then((result) => {
+            // Check if the user clicked "OK"
+            console.log(result);
+            if (result.isConfirmed) {
+              // setSearchResult((prevSearchResult) => (prevSearchResult ? [...prevSearchResult, newDevice] : [newDevice]));
+              // setUsageData((prevUsageData) => [...prevUsageData, { ...newDevice, startTime: '', endTime: '' }]);
+            }
+          });
+      })
+      .catch(error => {
+          console.error('Error during login:', error.response.data);
+      });
+
+    // OR, if you want to add the new device to usageData
+  };
   
   const handleDelete = (index) => {
     setUsageData((prevUsageData) => {
@@ -218,12 +309,46 @@ const CheckoutPage = () => {
                 </button>
               </div>
             </div>
-            <button className="btn btn-primary">
+            <button className="btn btn-primary"  onClick={handleDialogOpen}>
               <FontAwesomeIcon icon={faPlus} className="mr-2" />
               Add Item
             </button>
           </div>
 
+
+    <Dialog open={dialogOpen} onClose={handleDialogClose} fullWidth maxWidth="md">
+      <DialogTitle>Add Item</DialogTitle>
+      <DialogContent>
+        <form onSubmit={handleFormSubmit}>
+          <TextField
+            label="Device Name"
+            fullWidth
+            margin="normal"
+            value={newDevice.device_name}
+            onChange={(e) => handleInputChange('device_name', e.target.value)}
+          />
+          <TextField
+            label="Device Category"
+            fullWidth
+            margin="normal"
+            value={newDevice.device_category}
+            onChange={(e) => handleInputChange('device_category', e.target.value)}
+          />
+          <TextField
+            label="Product Power"
+            fullWidth
+            margin="normal"
+            value={newDevice.product_power}
+            onChange={(e) => handleInputChange('product_power', e.target.value)}
+          />
+          {/* Add more input fields as needed */}
+          <Button type="submit" color="primary" variant="contained">
+            Save
+          </Button>
+        </form>
+      </DialogContent>
+      {/* ... (Other dialog content) */}
+    </Dialog>
             {/* Display search results in a card */}
             {searchResult && (
             <div className="container mt-3">
