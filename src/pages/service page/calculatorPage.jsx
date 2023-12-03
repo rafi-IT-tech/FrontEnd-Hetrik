@@ -218,7 +218,7 @@ const CheckoutPage = () => {
                 </button>
               </div>
             </div>
-            <button className="btn btn-success">
+            <button className="btn btn-primary">
               <FontAwesomeIcon icon={faPlus} className="mr-2" />
               Add Item
             </button>
@@ -252,7 +252,7 @@ const CheckoutPage = () => {
                           <td>{result.product_power}</td>
                           <td> 
                           <button
-                              className="btn btn-success"
+                              className="btn btn-primary"
                               onClick={() => {
                                 setSelectedItem(result);
                                 handleAddToUsage(result);
@@ -338,7 +338,7 @@ const CheckoutPage = () => {
                 <tr>
 
                   <td className="text-center" colSpan="4"> 
-                   <button className="btn btn-success" onClick={handleSave}>
+                   <button className="btn btn-primary" onClick={handleSave}>
                 Hitung
             </button>
             </td>
