@@ -106,6 +106,9 @@ function DashboardPage() {
     textAlign: 'center'
   };
 
+  const headerStyle2 = {
+    color :'#f8f9fa'
+  }
    // Function to handle opening the dialog
    const handleDialogOpen = () => {
     setDialogOpen(true);
@@ -557,24 +560,24 @@ const dialogDevice = (
         <div className='main-cards'>
             <div className='card'>
                 <div className='card-inner' onClick={handleDialogOpenMaster}>
-                    <h3>DEVICE</h3>
+                    <h3 style={headerStyle2}>DEVICE</h3>
                     <BsFillArchiveFill className='card_icon'/>
                 </div>
-                <h1>{productCount}</h1>
+                <h1 style={headerStyle2}>{productCount}</h1>
             </div>
             <div className='card '>
                 <div className='card-inner'>
-                    <h3>Daya Bangunan</h3>
+                    <h3 style={headerStyle2}>Daya Bangunan</h3>
                     <BsFillGrid3X3GapFill className='card_icon'/>
                 </div>
-                <h1>{categoryCount}</h1>
+                <h1 style={headerStyle2}>{categoryCount}</h1>
             </div>
             <div className='card'>
                 <div className='card-inner'  onClick={handleDialogOpen}>
-                    <h3>Total Listrik</h3>
+                    <h3 style={headerStyle2}>Total Listrik</h3>
                     <BsPeopleFill className='card_icon'/>
                 </div>
-                <h1>{chartLineTest}</h1>
+                <h1 style={headerStyle2}>{chartLineTest}</h1>
             </div>
             {/* <div className='card'>
                 <div className='card-inner'>
@@ -680,8 +683,8 @@ const dialogDevice = (
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="product_power" fill="#8884d8" />
-                {/* <Bar dataKey="device_category" fill="#82ca9d" /> */}
+                <Bar dataKey="product_power" fill="#2962ff" />
+                {/* <Bar dataKey="device_category" fill="#82ca9d" /> */} 
                 
                 </BarChart>
             </ResponsiveContainer>

@@ -4,8 +4,16 @@ import asset2 from '../../assets/asset-2.png';
 import asset3 from '../../assets/asset-3.png';
 import asset4 from '../../assets/asset-4.png';
 import asset5 from '../../assets/asset-5.png';
+import { createBrowserHistory } from 'history'; 
 
 const Homemain = () => {
+
+    const history = createBrowserHistory();
+
+    const setjalan = () => {
+        history.push("/Service");
+        window.location.reload();
+    }
     return (
         <div>
             <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 p-8">
@@ -18,7 +26,8 @@ const Homemain = () => {
                         and save on electricity costs.
                     </p>
                     <button
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mt-20">
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mt-20"
+                        onClick={setjalan}>
                         Count Now
                     </button>
                 </div>
@@ -39,12 +48,12 @@ const Homemain = () => {
                             <img src={asset2} alt="Company Logo" className="h-80 mr-30 z-20"/>
                         </div>
                         <div className="flex flex-col ml-4 mr-20">
-                            <span className="font-bold text-xl">why should you use our platform?</span>
+                            <span className="font-bold text-xl">Why hould you use our platform?</span>
                             <p className="max-w-lg mt-5">
                                 - Our platform provides an accurate electricity calculator.
                                 <br/>- Provide weekly reports of electricity usage.
                                 <br/>- and provide rewards in the form of electricity vouchers to users
-                                    according to T&C
+                                       according to T&C
                             </p>
                         </div>
                     </div>
