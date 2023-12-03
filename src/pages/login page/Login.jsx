@@ -161,7 +161,7 @@ const Login = () => {
                         onClick={handleLogin}>
                         Login
                     </button>
-                    <p className="text-gray-600 mb-4">you don’t have an account?</p>
+                    <p className="text-gray-600 mb-4">you don’t have an account? <a href="/signUp">Register</a></p>
                 </div>
             </div>
 
