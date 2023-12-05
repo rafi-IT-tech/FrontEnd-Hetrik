@@ -24,17 +24,21 @@ const PrivateRoute = ({ element }) => {
 const App = () => {
     return (
         <div>
-            {/* <Routes>
+             <Routes>
                 <Route path="/" Component={Homepage}/>
                 <Route path="/About Us" Component={About}/>
                 <Route path="/Service" Component={Service}/>
                 <Route path="/Article" Component={Article}/>
+
+                 
+                <Route path="/Paymentmain" Component={Paymentmain}/>
+                <Route path="/Calculate" Component={CalculatorPage}/>
                 <Route path="/Login" Component={Login}/>
                 <Route path="/SignUp" Component={Signup}/>
                 <Route path="/Dashboard" Component={DashboardPage}/>
 
-            </Routes> */}
-
+            </Routes> 
+{/* 
         <Routes>
         <Route path="/" element={<Homepage />}/>
         <Route path="/About" element={<PrivateRoute element={<About />} />} />
@@ -47,6 +51,8 @@ const App = () => {
         <Route path="/SignUp" element={<Signup />} />
         <Route path="/Dashboard" element={<PrivateRoute element={<DashboardPage />} />} />
       </Routes>
+ */}
+            
         </div>
     )
 }
