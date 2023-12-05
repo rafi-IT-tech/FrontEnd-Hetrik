@@ -374,7 +374,7 @@ const CheckoutPage = () => {
                         <tr key={index}>
                           <td>{result.device_name}</td>
                           <td>{result.device_category}</td>
-                          <td>{result.product_power} VA</td>
+                          <td>{result.product_power} Watt</td>
                           <td> 
                           <button
                               className="btn btn-primary"
