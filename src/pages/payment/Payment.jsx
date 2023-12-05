@@ -23,25 +23,73 @@ const Paymentmain = () => {
         return `${year}-${month}-${day}`;
       };
 
-    const handleSubmit = (e) => {
+    // const handleSubmit = (e) => {
        
 
-        e.preventDefault();
+    //     e.preventDefault();
 
+    //     const storedToken = localStorage.getItem('token');
+    //     const userID = localStorage.getItem('userID');
+    
+    //     const postData = {
+    //       UserID: userID,
+    //       JenisPembayaran: selectedJenis,
+    //       NomorKartu: nomorKartu,
+    //       TanggalKadaluarsa: calculateExpiryDate(), // Gunakan fungsi calculateExpiryDate
+    //       NamaPemilikKartu: namaPemilikKartu,
+    //       DayaBangunan: "", // Sesuaikan dengan data yang diperlukan
+    //     };
+    
+    //     const API_SAVE = 'https://hetrik-api.onrender.com/api/payment/paymentMethods';
+    
+    //     axios.post(API_SAVE, postData, {
+    //       headers: {
+    //         'Authorization': `Bearer ${storedToken}`,
+    //       },
+    //     })
+    //       .then(response => {
+    //         console.log('Payment data saved successfully:', response);
+    //         // Lakukan tindakan tambahan jika perlu
+    //       })
+    //       .catch(error => {
+    //         console.error('Error saving payment data:', error);
+    //         // Handle errors as needed
+    //       });
+    //     // Redirect Off
+    //     setTimeout(() => {
+    //         history.push('/dashboard');
+    //         window.location.reload();
+            
+    //     }, 3500);
+
+    // };
+
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+      
         const storedToken = localStorage.getItem('token');
         const userID = localStorage.getItem('userID');
-    
+      
+        // Generate prefix based on the selected payment method
+        let nomorKartuPrefix = '';
+        if (selectedJenis === 'Transfer') {
+          // Add your logic to generate the prefix for Transfer
+          nomorKartuPrefix = '3125';
+        }
+      
         const postData = {
           UserID: userID,
           JenisPembayaran: selectedJenis,
-          NomorKartu: nomorKartu,
-          TanggalKadaluarsa: calculateExpiryDate(), // Gunakan fungsi calculateExpiryDate
+          NomorKartu: `${nomorKartuPrefix}`, // Concatenate the prefix with the nomorKartu
+          TanggalKadaluarsa: calculateExpiryDate(),
           NamaPemilikKartu: namaPemilikKartu,
-          DayaBangunan: "", // Sesuaikan dengan data yang diperlukan
+          DayaBangunan: "",
         };
-    
+      
+        console.log("Post Data" ,postData);
         const API_SAVE = 'https://hetrik-api.onrender.com/api/payment/paymentMethods';
-    
+      
         axios.post(API_SAVE, postData, {
           headers: {
             'Authorization': `Bearer ${storedToken}`,
@@ -55,15 +103,14 @@ const Paymentmain = () => {
             console.error('Error saving payment data:', error);
             // Handle errors as needed
           });
+      
         // Redirect Off
         setTimeout(() => {
-            history.push('/dashboard');
-            window.location.reload();
-            
+          history.push('/dashboard');
+          window.location.reload();
         }, 3500);
-
-    };
-
+      };
+      
     return (
         <div
             className="max-w-md mx-auto bg-white rounded p-10 shadow-lg lg:mt-60 xl:mt-40">
@@ -72,12 +119,12 @@ const Paymentmain = () => {
                 <div className="mb-8">
                     <label
                         htmlFor="nomorKartu"
-                        className="block text-gray-700 text-sl font-bold mb-2 mt-10">Nomor Kartu</label>
+                        className="block text-gray-700 text-sl font-bold mb-2 mt-10">Virtual Account </label>
                     <input
                         type="text"
                         id="nomorKartu"
                         name="nomorKartu"
-                        value={nomorKartu}
+                        value={3125}
                         onChange={(e) => setNomorkartu(e.target.value)}
                         className="border border-gray-300 p-2 w-full"
                         required="required"/>
@@ -86,10 +133,10 @@ const Paymentmain = () => {
                 <div className="mb-8">
                     <label
                         htmlFor="namaPemilikKartu"
-                        className="block text-gray-700 text-sl font-bold mb-2 mt-10">Nama Pemilik Kartu</label>
+                        className="block text-gray-700 text-sl font-bold mb-2 mt-10">Nomer Telephone</label>
                     <input
-                        type="text"
-                        id="namaPemilikKartu"
+                        type="number"
+                        id="Nomer Telephone"
                         name="namaPemilikKartu"
                         value={namaPemilikKartu}
                         onChange={(e) => setNamaPemilikKartu(e.target.value)}
@@ -107,11 +154,9 @@ const Paymentmain = () => {
                         onChange={(e) => setSelectedJenis(e.target.value)}
                         className="border border-gray-300 p-2 w-full"
                         required="required">
-                        <option value="" >Metode</option>
-                        <option value="Ovo" >Ovo</option>
+                   
                         <option value="Transfer">Transfer </option>
-                        <option value="Gopay">Gopay</option>
-                        <option value="Tunai">Tunai</option>
+                    
                  
                         {/* {
                             powerOptions.map(

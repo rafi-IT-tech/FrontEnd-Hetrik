@@ -49,11 +49,10 @@ const Navbar = () => {
         <NavLink to="/" exact className="mx-4 text-gray-400 hover:text-blue-600" activeClassName="text-blue-500">
           Home
         </NavLink>
-        <NavLink to="/About Us" className="mx-4 text-gray-400 hover:text-blue-600" activeClassName="text-blue-500">
+        <NavLink to="/About" className="mx-4 text-gray-400 hover:text-blue-600" activeClassName="text-blue-500">
           About
         </NavLink>
         <NavLink to="/Service" className="mx-4 text-gray-400 hover:text-blue-600" activeClassName="text-blue-500">
-          Service
         </NavLink>
         <NavLink to="/Article" className="mx-4 text-gray-400 hover:text-blue-600" activeClassName="text-blue-500">
           Article
