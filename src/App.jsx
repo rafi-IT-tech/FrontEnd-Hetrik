@@ -6,6 +6,13 @@ import {Routes, Route,Navigate } from "react-router-dom";
 import Homepage from "./pages/home page/Home";
 import About from "./pages/about page/About";
 import Service from "./pages/service page/services";
+import Article1 from "./pages/article page/article1";
+import Article2 from "./pages/article page/article2";
+import Article3 from "./pages/article page/article3";
+import Article4 from "./pages/article page/article4";
+import Article5 from "./pages/article page/article5";
+import Article6 from "./pages/article page/article6";
+
 import Article from "./pages/article page/Article";
 import Login from "./pages/login page/Login";
 import Signup from "./pages/register page/Register";
@@ -45,6 +52,12 @@ const App = () => {
         {/* <Route path="/About" element={<PrivateRoute element={<Article />} />} /> */}
         <Route path="/About" element={<About />} />
 
+        <Route path="/Article1" element={<Article1 />}  />
+        <Route path="/Article2" element={<Article2 />} />
+        <Route path="/Article3" element={<Article3 />}  />
+        <Route path="/Article4" element={<Article4 />} />
+        <Route path="/Article5" element={<Article5 />}  />
+        <Route path="/Article6" element={<Article6 />} />
         <Route path="/Article" element={<Article />} />
 
         <Route path="/Login" element={<Login />} />
