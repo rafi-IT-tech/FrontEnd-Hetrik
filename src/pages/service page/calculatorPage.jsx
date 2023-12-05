@@ -422,7 +422,7 @@ const CheckoutPage = () => {
                   <tr key={index}>
                     <td>{item.device_name}</td>
                     <td>{item.device_category}</td>
-                    <td>{item.product_power} VA </td>
+                    <td>{item.product_power} Watt </td>
                     <td>
                       <input
                         type="datetime-local"
