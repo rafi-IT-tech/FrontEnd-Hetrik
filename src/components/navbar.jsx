@@ -21,7 +21,7 @@ const Navbar = () => {
     // Implement logout logic, clear local storage, or send a request to invalidate the token
     // localStorage.removeItem('token');
     localStorage.clear();
-    history.push("/Login");
+    history.push("/");
     window.location.reload();
 
     // Additional logic as needed
