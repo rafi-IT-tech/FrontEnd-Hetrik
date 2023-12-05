@@ -37,12 +37,15 @@ const App = () => {
 
         <Routes>
         <Route path="/" element={<Homepage />}/>
-        <Route path="/About" element={<PrivateRoute element={<About />} />} />
         <Route path="/Calculate" element={<PrivateRoute element={<CalculatorPage />} />} />
         <Route path="/Paymentmain" element={<PrivateRoute element={<Paymentmain />} />} />
 
         <Route path="/Service" element={<PrivateRoute element={<Service />} />} />
-        <Route path="/Article" element={<PrivateRoute element={<Article />} />} />
+        {/* <Route path="/About" element={<PrivateRoute element={<About />} />} /> */}
+        {/* <Route path="/Article" element={<PrivateRoute element={<Article />} />} /> */}
+        <Route path="/Article" element={<Article />} />
+        <Route path="/About" element={<About />} />
+
         <Route path="/Login" element={<Login />} />
         <Route path="/SignUp" element={<Signup />} />
         <Route path="/Dashboard" element={<PrivateRoute element={<DashboardPage />} />} />
