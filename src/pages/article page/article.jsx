@@ -1,16 +1,12 @@
-import React from 'react'
-import Navbar from '../../components/navbar';
-import Footer from '../../components/footer';
-import MasterCard from '../article page/mastercard'
+// article.jsx
+import React from 'react';
 
 const Article = () => {
+  // Component logic here
   return (
     <div>
-        <Navbar />
-        <MasterCard />
-        <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default Article
+export default Article;
