@@ -4,13 +4,13 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { createBrowserHistory } from 'history'; 
 
+    const history = createBrowserHistory();
 const Servicemain = () => {
     const [buildingName, setBuildingName] = useState('');
     const [powerOptions, setPowerOptions] = useState([]);
     const [selectedPower, setSelectedPower] = useState('');
     
 
-    const history = createBrowserHistory();
 
 
     const handleSubmit = (e) => {
