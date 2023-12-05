@@ -3,11 +3,13 @@ import React, {useState} from 'react';
 import image from '../../assets/bglr.png';
 import axios from 'axios';  // Import Axios
 import { createBrowserHistory } from 'history'; 
+import Swal from 'sweetalert2';
 
 // const apiUrl = process.env.REACT_APP_API_ENDPOINT + '/auth/login'; // Use the environment variable
 const apiUrl = 'https://hetrik-api.onrender.com/api/auth/login'; // Use the environment variable
 
 const authenticatedApiUrl = 'https://hetrik-api.onrender.com/api/user/users'; // Use the environment variable
+const sessionPayment = 'https://hetrik-api.onrender.com/api/payment/paymentMethods/checkPaymentMethodsExist'; // Use the environment variable
 
 const history = createBrowserHistory();
 
@@ -33,7 +35,10 @@ const Login = () => {
                 const authToken = response.data.token;
                 setToken(authToken);
                 localStorage.setItem('token', authToken);
+                localStorage.setItem('userID', response.data.userID);
+
                 handleAuthenticatedRequest();
+                handleSessionPayment();
             })
             .catch(error => {
                 console.error('Error during login:', error);
@@ -52,13 +57,85 @@ const Login = () => {
         })
             .then(response => {
                 console.log('Authenticated request successful:', response.data);
-                history.push("/");
 
-                window.location.reload();
+                Swal.fire({
+                    title: 'Berhasil Login',
+                    text: 'Selamat Anda Berhasil Masuk. Silahkan click Ok untuk diarahkan Ke Halaman Selanjutnya',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                  }).then((result) => {
+                    // Check if the user clicked "OK"
+                    console.log(result);
+                    if (result.isConfirmed) {
+                      // Redirect to the payment page
+                      history.push('/');
+                      window.location.reload();
+                    }
+                  });
+                // history.push("/");
+
+                // window.location.reload();
             })
             .catch(error => {
+                Swal.fire({
+                    title: 'Gagal Login',
+                    text: 'Mohon Maaf . mohon diperiksa kembali email dan passwordnya',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                  }).then((result) => {
+                    // Check if the user clicked "OK"
+                    console.log(result);
+                    if (result.isConfirmed) {
+                      // Redirect to the payment page
+                    //   history.push('/Login');
+                    //   window.location.reload();
+                    }
+                  });
                 console.error('Error during authenticated request:', error.response.data);
             });
+    };
+
+    const handleSessionPayment = () => {
+
+        const storedToken = localStorage.getItem('token');
+        const userID = localStorage.getItem('userID');
+
+        const data  = {userId :userID };
+        axios.post(sessionPayment, data,{
+          headers: {
+            'Authorization': `Bearer ${storedToken}`,
+          },
+        })
+          .then(response => {
+            const currentDate = new Date();
+            const expirationDate = new Date(response.data[0].TanggalKadaluarsa);
+
+            console.log("Waktu ",currentDate);
+
+            console.log("Session ",response.data[0].TanggalKadaluarsa);
+            // Pengecekan tanggal kadaluarsa
+            if (currentDate < expirationDate) {
+              
+                // Jika waktu hari ini masih di bawah tanggal kadaluarsa
+              localStorage.setItem('is_payment', 'true');
+              history.push("/");
+            } else {
+            // Jika waktu hari ini lebih dari tanggal kadaluarsa
+            localStorage.setItem('is_payment', 'false');
+            // history.push("/paymentmain");
+            }
+    
+            // window.location.reload();
+          })
+          .catch(error => {
+            // localStorage.setItem('is_payment', 'false');
+            // history.push("/paymentmain");
+            // window.location.reload();
+
+            // console.error('Error during authenticated request:', error.response.data);
+          });
+
+
     };
 
     return (

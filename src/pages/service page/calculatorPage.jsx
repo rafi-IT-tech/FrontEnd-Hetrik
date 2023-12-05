@@ -4,6 +4,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch, faToggleOn, faToggleOff, faTimes } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import { createBrowserHistory } from 'history'; 
+
 
 import { useSpring, animated } from 'react-spring';
 
@@ -13,6 +16,86 @@ const CheckoutPage = () => {
   const [searchResult, setSearchResult] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [usageData, setUsageData] = useState([]);
+  const [saveStatus, setSaveStatus] = useState(null); // State untuk menyimpan status save
+  const [saveTotal, setTotal] = useState(null); // State untuk menyimpan status save
+
+  const history = createBrowserHistory();
+
+  const handleSave = () => {
+
+    const isPaymentMade = localStorage.getItem('is_payment') === 'true';
+    if (!isPaymentMade) {
+      // If payment is not made, show SweetAlert
+      Swal.fire({
+        title: 'Payment Required',
+        text: 'Anda Harus Melakukan Langganan Terlebih Dahulu',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      }).then((result) => {
+        // Check if the user clicked "OK"
+        if (result.isConfirmed) {
+          // Redirect to the payment page
+          history.push('/Paymentmain');
+          window.location.reload();
+        }
+      });
+      return;
+    }
+
+    // Assuming you have a server endpoint to save the usage data
+    const API_SAVE = `https://hetrik-api.onrender.com/api/hitung/usage/create`;
+
+
+    const storedToken = localStorage.getItem('token');
+    const userID = localStorage.getItem('userID');
+    const BuildingPowerID = localStorage.getItem('BuildingPowerID');
+
+    // Extracting relevant information for saving (you might need to adjust this based on your actual data structure)
+    const dataToSave = {
+      UserID: userID,
+      // RoomID: "65609a4d6174c3093b982806",
+      BuildingPowerID: BuildingPowerID,
+      WaktuMulai: usageData.length > 0 ? usageData[0].startTime : "", // Ambil startTime dari item pertama
+      WaktuSelesai: usageData.length > 0 ? usageData[usageData.length - 1].endTime : "", // Ambil endTime dari item terakhir
+      Boros: true,
+      device: usageData.map(item => ({
+        device_id: item._id,
+      })),
+    };
+
+    // Send a POST request to save the data
+    axios.post(API_SAVE, dataToSave,{
+      headers: {
+        'Authorization': `Bearer ${storedToken}`,
+    },
+    })
+      .then(response => {
+        console.log('Usage data saved successfully:', response.data.TotalDayaHabiskan);
+        setSaveStatus(response.data.TotalDayaHabiskan);
+        setTotal(response.data.BiayaDayaDigunakan);
+        // You can perform additional actions upon successful save
+
+           // Display success message
+           Swal.fire({
+            title: 'Save Successful',
+            text: 'Your data has been saved successfully. Silahkan click Ok untuk diarahkan Ke Dashboard',
+            icon: 'success',
+            confirmButtonText: 'OK',
+          }).then((result) => {
+            // Check if the user clicked "OK"
+            console.log(result);
+            if (result.isConfirmed) {
+              // Redirect to the payment page
+              history.push('/dashboard');
+              window.location.reload();
+            }
+          });
+      })
+      .catch(error => {
+        console.error('Error saving usage data:', error);
+        // Handle errors as needed
+      });
+  };
 
   const handleSearch = () => {
     // Implement your search logic here
@@ -44,19 +127,51 @@ const CheckoutPage = () => {
   };
 
   const handleAddToUsage = (selectedItem) => {
-    setUsageData([...usageData, { ...selectedItem, toggle: false }]);
+    setUsageData([...usageData, { ...selectedItem, startTime: '', endTime: '' }]);
   };
 
-  const handleToggle = (index) => {
+  const handleTimeChange = (index, type, value) => {
     setUsageData((prevUsageData) => {
       const updatedUsageData = [...prevUsageData];
-      updatedUsageData[index] = { ...updatedUsageData[index], toggle: !updatedUsageData[index].toggle };
-  
-      console.log("UpdatedUsageData TOGGLE", updatedUsageData);
+      updatedUsageData[index] = {
+        ...updatedUsageData[index],
+        [type]: value,
+      };
       return updatedUsageData;
     });
   };
 
+
+
+  // const handleToggle = (index) => {
+  //   setUsageData((prevUsageData) => {
+  //     const updatedUsageData = [...prevUsageData];
+  //     // const currentTime = new Date().toLocaleTimeString(); // Get the current time
+  //     const currentTime = new Date().toISOString(); // Format the current time as ISO string
+     
+  //     if (updatedUsageData[index].toggle) {
+  //       // If toggle is turning off, update end time
+  //       updatedUsageData[index] = {
+  //         ...updatedUsageData[index],
+  //         toggle: false,
+  //         endTime: currentTime,
+  //       };
+  //     } else {
+  //       // If toggle is turning on, update start time
+  //       updatedUsageData[index] = {
+  //         ...updatedUsageData[index],
+  //         toggle: true,
+  //         startTime: currentTime,
+  //       };
+  //     }
+
+  //     console.log("UpdatedUsageData TOGGLE", updatedUsageData);
+  //     return updatedUsageData;
+  //   });
+  // };
+
+
+  
   const handleDelete = (index) => {
     setUsageData((prevUsageData) => {
       const updatedUsageData = [...prevUsageData];
@@ -169,7 +284,10 @@ const CheckoutPage = () => {
                   <th scope="col">Device Name</th>
                   <th scope="col">Device Category</th>
                   <th scope="col">Device Power</th>
-                  <th colSpan={2}>Action</th>
+                  <th scope="col">Start Time</th>
+                  <th scope="col">End Time</th>
+
+                  <th scope='col'>Action</th>
 
                   {/* Add more columns as needed */}
                 </tr>
@@ -181,22 +299,18 @@ const CheckoutPage = () => {
                     <td>{item.device_category}</td>
                     <td>{item.product_power}</td>
                     <td>
-                      <animated.span
-                        style={toggleSpring}
-                        onClick={() => handleToggle(index)}
-                      >
-                        {item.toggle ? (
-                          <FontAwesomeIcon
-                            icon={faToggleOn}
-                            className="text-success"
-                          />
-                        ) : (
-                          <FontAwesomeIcon
-                            icon={faToggleOff}
-                            className="text-secondary"
-                          />
-                        )}
-                      </animated.span>
+                      <input
+                        type="datetime-local"
+                        value={item.startTime}
+                        onChange={(e) => handleTimeChange(index, 'startTime', e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="datetime-local"
+                        value={item.endTime}
+                        onChange={(e) => handleTimeChange(index, 'endTime', e.target.value)}
+                      />
                     </td>
                     <td>
                       <animated.span
@@ -217,6 +331,19 @@ const CheckoutPage = () => {
                   <td colSpan="2" className="text-center">No data available</td>
                 </tr> */}
               </tbody>
+
+
+
+              <tfoot>
+                <tr>
+
+                  <td className="text-center" colSpan="4"> 
+                   <button className="btn btn-success" onClick={handleSave}>
+                Hitung
+            </button>
+            </td>
+                </tr>
+              </tfoot>
             </table>
           </div>
         </div>
@@ -227,32 +354,18 @@ const CheckoutPage = () => {
             <h2 className="card-title mb-0">Result</h2>
           </div>
           <div className="card-body">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">Column A</th>
-                  <th scope="col">Column B</th>
-                  {/* Add more columns as needed */}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colSpan="2" className="text-center">No data available</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
+        
+          <tr>
                 <td className="text-right" colSpan="1"></td>
 
-                  <td className="text-right" colSpan="1">Saved Usage</td>
+                  <td className="text-right" colSpan="1">Saved Usage : {saveStatus} kwh</td>
                 </tr>
                 <tr>
                 <td className="text-right" colSpan="1"></td>
 
-                  <td className="text-right" colSpan="1">Total Usage</td>
+                  <td className="text-right" colSpan="1">Total Usage: Rp  {saveTotal} </td>
                 </tr>
-              </tfoot>
-            </table>
+
           </div>
         </div>
 

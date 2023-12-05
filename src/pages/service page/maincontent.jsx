@@ -1,13 +1,16 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 // import {createBrowserHistory} from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { createBrowserHistory } from 'history'; 
 
 const Servicemain = () => {
     const [buildingName, setBuildingName] = useState('');
     const [powerOptions, setPowerOptions] = useState([]);
     const [selectedPower, setSelectedPower] = useState('');
+    
 
-    // const history = createBrowserHistory();
+    const history = createBrowserHistory();
 
 
     const handleSubmit = (e) => {
@@ -34,7 +37,24 @@ const Servicemain = () => {
             })
             .then(response => {
                 // setPowerOptions(response.data);
-                console.log("Response Success",response);
+                console.log("Response Success",response.data._id);
+
+                localStorage.setItem('BuildingPowerID',response.data._id);
+
+                Swal.fire({
+                    title: 'Save Successful',
+                    text: 'Your data has been saved successfully. Silahkan click Ok untuk diarahkan Ke Service Calculator',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                  }).then((result) => {
+                    // Check if the user clicked "OK"
+                    console.log(result);
+                    if (result.isConfirmed) {
+                      // Redirect to the payment page
+                      history.push('/Calculate');
+                      window.location.reload();
+                    }
+                  });
             })
             .catch(error => {
                 console.error('Error fetching power options:', error);
